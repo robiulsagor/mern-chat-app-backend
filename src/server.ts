@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import mongoose from 'mongoose'
 
 import authRoute from "./routes/auth.route"
+import userRoute from "./routes/user.route"
 
 dotenv.config()
 
@@ -23,6 +24,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/v1/auth', authRoute)
+app.use('/api/v1/user', userRoute)
 
 const PORT = process.env.PORT || 5000
 const MONGO_URI = process.env.MONGO_URI || ''

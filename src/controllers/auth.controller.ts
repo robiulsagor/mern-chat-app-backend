@@ -100,7 +100,6 @@ export const loginUser = async (req: Request, res: Response) => {
     }
 };
 
-// experimental: just to verify the token
 export const verify = async (req: Request, res: Response) => {
     try {
         const token = req.cookies?.accessToken;
