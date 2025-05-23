@@ -78,7 +78,7 @@ export const loginUser = async (req: Request, res: Response) => {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
-            maxAge: 10 * 1000, // 1 day
+            maxAge: 60 * 60 * 1000, // 1 day
         }).cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
@@ -101,26 +101,31 @@ export const loginUser = async (req: Request, res: Response) => {
 };
 
 // experimental: just to verify the token
-// export const verify = async (req: Request, res: Response) => {
-//     try {
-//         const token = req.cookies?.accessToken;
-//         if (!token) {
-//             return res.status(401).json({ success: false, message: "Unauthorized, No token found!" });
-//         }
+export const verify = async (req: Request, res: Response) => {
+    try {
+        const token = req.cookies?.accessToken;
+        if (!token) {
+            return res.status(401).json({ success: false, message: "Unauthorized, No token found!" });
+        }
 
-//         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET as string);
-//         if (!decoded) {
-//             return res.status(401).json({ success: false, message: "Unauthorized, Invalid token!" });
-//         }
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!) as jwt.JwtPayload;
+        if (!decoded) {
+            return res.status(401).json({ success: false, message: "Unauthorized, Invalid token!" });
+        }
 
-//         console.log(decoded);
-//         res.status(200).json({ success: true, message: "Yes, Valid token found!" })
-//     }
-//     catch (error) {
-//         console.error("Error in verifyController: ", error);
-//         res.status(500).json({ success: false, message: `Error: ${error}` });
-//     }
-// }
+        console.log(decoded);
+        const user = await User.findById(decoded?.userId);
+        if (!user) {
+            return res.status(401).json({ success: false, message: "Unauthorized, User not found!" });
+        }
+
+        res.status(200).json({ success: true, message: "Yes, Valid token found!" , user})
+    }
+    catch (error) {
+        console.error("Error in verifyController: ", error);
+        res.status(500).json({ success: false, message: `Error: ${error}` });
+    }
+}
 
 export const refreshToken = async (req: Request, res: Response) => {
     const token = req.cookies?.refreshToken;
