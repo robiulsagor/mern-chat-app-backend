@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from "express"
-import { loginUser, refreshToken, verify, registerUser } from "../controllers/auth.controller"
+import { loginUser, refreshToken, verify, registerUser, logoutUser } from "../controllers/auth.controller"
 import { asyncHandler } from "../utils/asyncHelper";
 import { authMiddleware } from "../middlewares/auth";
 
@@ -9,7 +9,7 @@ router.post('/register', asyncHandler(registerUser));
 
 router.post('/login', asyncHandler(loginUser))
 
-router.get('/refresh', asyncHandler(refreshToken))
+router.get('/logout', logoutUser)
 
 // experimental api
 router.get('/verify-token', asyncHandler(verify))

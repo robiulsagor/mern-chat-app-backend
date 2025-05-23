@@ -163,3 +163,9 @@ export const refreshToken = async (req: Request, res: Response) => {
     });
 }
 
+export const logoutUser = async (req: Request, res: Response) => {
+    res.cookie("accessToken", "").cookie("refreshToken", "").status(200).json({
+            success: true,
+            message: "User logged user",
+        });
+}
