@@ -37,7 +37,7 @@ export const registerUser = async (
 
         await user.save();
 
-         const accessToken = generateAccessToken(user._id.toString());
+        const accessToken = generateAccessToken(user._id.toString());
         const refreshToken = generateRefreshToken(user._id.toString());
 
         res.cookie('accessToken', accessToken, {
@@ -104,8 +104,8 @@ export const loginUser = async (req: Request, res: Response) => {
             user: {
                 name: user.name,
                 email: user.email,
-                token: accessToken,
                 bio: user.bio || "",
+                profilePicture: user?.profilePicture || "",
             },
         });
 
@@ -132,7 +132,7 @@ export const verify = async (req: Request, res: Response) => {
             return res.status(401).json({ success: false, message: "Unauthorized, User not found!" });
         }
 
-        res.status(200).json({ success: true, message: "Yes, Valid token found!" , user})
+        res.status(200).json({ success: true, message: "Yes, Valid token found!", user })
     }
     catch (error) {
         console.error("Error in verifyController: ", error);
@@ -164,7 +164,7 @@ export const refreshToken = async (req: Request, res: Response) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
-        maxAge:  60 * 60 * 1000, // 1 hour
+        maxAge: 60 * 60 * 1000, // 1 hour
     }).cookie('refreshToken', newRefreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -179,7 +179,7 @@ export const refreshToken = async (req: Request, res: Response) => {
 
 export const logoutUser = async (req: Request, res: Response) => {
     res.cookie("accessToken", "").cookie("refreshToken", "").status(200).json({
-            success: true,
-            message: "User logged user",
-        });
+        success: true,
+        message: "User logged user",
+    });
 }

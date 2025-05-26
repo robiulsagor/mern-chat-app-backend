@@ -9,7 +9,7 @@ export const updateProfile = async (req: Request, res: Response) => {
         const { bio } = req.body;
         const userId = req.userId;
 
-        let profileImageUrl;
+        let profilePictureUrl;
 
         if (req.file) {
             const result = await new Promise<any>((resolve, reject) => {
@@ -28,15 +28,15 @@ export const updateProfile = async (req: Request, res: Response) => {
                 );
                 stream.end(req.file!.buffer);
             })
-            profileImageUrl = result.secure_url;
+            profilePictureUrl = result.secure_url;
         }
 
         const updatedFields: any = {
             bio
         }
 
-        if (profileImageUrl) {
-            updatedFields.picture = profileImageUrl;
+        if (profilePictureUrl) {
+            updatedFields.profilePicture = profilePictureUrl;
         }
 
         console.log("Updating user with fields:", updatedFields);

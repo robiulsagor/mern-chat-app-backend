@@ -1,4 +1,4 @@
-import mongoose, {Schema} from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const userSchema = new Schema({
     name: {
@@ -17,11 +17,11 @@ const userSchema = new Schema({
     bio: {
         type: String
     },
-    picture: {
+    profilePicture: {
         type: String
     }
 },
-{timestamps: true})
+    { timestamps: true })
 
 const User = mongoose.model("User", userSchema)
 
