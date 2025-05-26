@@ -37,13 +37,27 @@ export const registerUser = async (
 
         await user.save();
 
-        return res.status(201).json({
+         const accessToken = generateAccessToken(user._id.toString());
+        const refreshToken = generateRefreshToken(user._id.toString());
+
+        res.cookie('accessToken', accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 60 * 60 * 1000, // 1 day
+        }).cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        }).status(201).json({
             success: true,
             message: "User registered successfully!",
             user: {
                 name: user.name,
                 email: user.email,
                 token: generateAccessToken(user._id.toString()),
+                bio: user.bio || "",
             },
         })
     }
