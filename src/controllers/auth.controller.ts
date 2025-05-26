@@ -113,7 +113,6 @@ export const verify = async (req: Request, res: Response) => {
             return res.status(401).json({ success: false, message: "Unauthorized, Invalid token!" });
         }
 
-        console.log(decoded);
         const user = await User.findById(decoded?.userId);
         if (!user) {
             return res.status(401).json({ success: false, message: "Unauthorized, User not found!" });
