@@ -6,6 +6,7 @@ import mongoose from 'mongoose'
 
 import authRoute from "./routes/auth.route"
 import userRoute from "./routes/user.route"
+import msgRoute from "./routes/message.route"
 
 dotenv.config()
 
@@ -25,6 +26,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/v1/auth', authRoute)
 app.use('/api/v1/user', userRoute)
+app.use('/api/v1/message', msgRoute)
 
 const PORT = process.env.PORT || 5000
 const MONGO_URI = process.env.MONGO_URI || ''

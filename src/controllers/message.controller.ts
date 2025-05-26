@@ -1,0 +1,32 @@
+import { Request, Response } from "express";
+import Message from "../models/message.model";
+
+export const sendMessage = async (req: Request, res: Response) => {
+    try {
+        const { receiverId, content } = req.body;
+        const senderId = req.userId;
+
+        if (!receiverId || !content) {
+            return res.status(400).json({ message: "Receiver and content are required." });
+        }
+
+        const newMessage = await Message.create({
+            senderId,
+            receiverId,
+            content
+        })
+
+        res.status(201).json({
+            success: true,
+            message: "Message sent successfully!",
+            newMessage
+        });
+    } catch (error) {
+        // console.log("Error sending message:", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to send message.",
+            error: error instanceof Error ? error.message : "Unknown error"
+        });
+    }
+}
