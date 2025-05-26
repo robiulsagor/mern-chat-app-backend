@@ -30,3 +30,27 @@ export const sendMessage = async (req: Request, res: Response) => {
         });
     }
 }
+
+export const getMessages = async (req: Request, res: Response) => {
+    try {
+        const currentUserId = req.userId;
+        const otherUserId = req.params.userId;
+
+        const messages = await Message.find({
+            $or: [
+                { senderId: currentUserId, receiverId: otherUserId },
+                { senderId: otherUserId, receiverId: currentUserId },
+            ],
+        }).sort({ timestamp: 1 });
+
+        res.status(200).json(messages);
+    }
+    catch (error) {
+        console.error("Error fetching messages:", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch messages.",
+            error: error instanceof Error ? error.message : "Unknown error"
+        });
+    }
+}
