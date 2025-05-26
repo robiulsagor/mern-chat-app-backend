@@ -90,7 +90,8 @@ export const loginUser = async (req: Request, res: Response) => {
             user: {
                 name: user.name,
                 email: user.email,
-                token: accessToken
+                token: accessToken,
+                bio: user.bio || "",
             },
         });
 
