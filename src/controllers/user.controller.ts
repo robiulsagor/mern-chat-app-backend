@@ -4,6 +4,32 @@ import cloudinary from "../utils/cloudinary";
 
 export const getUser = async (req: Request, res: Response) => { };
 
+export const getAllUsers = async (req: Request, res: Response) => {
+    try {
+        const users = await User.find({ _id: { $ne: req.userId } })
+            .select("-password");
+
+        if (!users) {
+            return res.status(404).json({
+                success: false,
+                message: "No users found!",
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Users fetched successfully!",
+            users
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            message: error || "Something went wrong!",
+        });
+    }
+}
+
 export const updateProfile = async (req: Request, res: Response) => {
     try {
         const { bio } = req.body;
