@@ -43,7 +43,10 @@ export const getMessages = async (req: Request, res: Response) => {
             ],
         }).sort({ timestamp: 1 });
 
-        res.status(200).json(messages);
+        res.status(200).json({
+            success: true,
+            messages,
+        });
     }
     catch (error) {
         console.error("Error fetching messages:", error);
