@@ -54,3 +54,19 @@ export const getMessages = async (req: Request, res: Response) => {
         });
     }
 }
+
+export const markAsSeen = async (req: Request, res: Response) => {
+    try {
+        const message = await Message.findByIdAndUpdate(
+            req.params.messageId,
+            { seen: true },
+            { new: true }
+        );
+
+        if (!message) return res.status(404).json({ message: "Message not found." });
+
+        res.status(200).json(message);
+    } catch (err) {
+        res.status(500).json({ message: "Failed to mark as seen." });
+    }
+}
