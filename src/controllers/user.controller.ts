@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import User from "../models/user.model";
 import cloudinary from "../utils/cloudinary";
+import Message from "../models/message.model";
 
 export const getUser = async (req: Request, res: Response) => { };
 
@@ -8,6 +9,21 @@ export const getAllUsers = async (req: Request, res: Response) => {
     try {
         const users = await User.find({ _id: { $ne: req.userId } })
             .select("-password");
+
+        const unseenMessages = {}
+
+        const promise = users.map(async (user) => {
+            const messages = await Message.find({
+                senderId: user._id,
+                receiverId: req.userId,
+                seen: false
+            })
+            if (messages.length > 0) {
+                unseenMessages[user._id.toString()] = messages.length
+            }
+        })
+
+        await Promise.all(promise)
 
         if (!users) {
             return res.status(404).json({
@@ -19,7 +35,12 @@ export const getAllUsers = async (req: Request, res: Response) => {
         res.status(200).json({
             success: true,
             message: "Users fetched successfully!",
-            users
+            users:
+                users.map(user => ({
+                    ...user.toObject(),
+                    unseenMessages: unseenMessages[user._id.toString()] || 0
+                }))
+            ,
         });
     } catch (error) {
         console.log(error);

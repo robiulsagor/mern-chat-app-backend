@@ -43,6 +43,11 @@ export const getMessages = async (req: Request, res: Response) => {
             ],
         }).sort({ timestamp: 1 });
 
+        await Message.updateMany(
+            { senderId: otherUserId, receiverId: currentUserId, seen: false },
+            { seen: true }
+        );
+
         res.status(200).json({
             success: true,
             messages,
