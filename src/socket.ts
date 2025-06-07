@@ -15,11 +15,13 @@ export const initSocket = server => {
         console.log("New client connected: ", socket.id);
 
         socket.on("setup", (userId: string) => {
+            console.log("📨 Setup called by:", userId);
             socket.userId = userId;
             onlineUsers.set(userId, socket.id);
 
-            socket.broadcast.emit("userOnline", userId)
             socket.emit("onlineUsers", Array.from(onlineUsers.keys()));
+
+            socket.broadcast.emit("userOnline", userId)
         })
 
         socket.on("sendMessage", (message) => {
