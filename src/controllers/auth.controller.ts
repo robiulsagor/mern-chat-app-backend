@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 
 import { Request, Response } from "express";
 import { generateAccessToken, generateRefreshToken } from "../utils/generateToken";
+import { getIo } from "../socket";
 
 export const registerUser = async (
     req: Request,
@@ -36,6 +37,15 @@ export const registerUser = async (
         });
 
         await user.save();
+
+        const io = getIo()
+        io.emit("newUser", {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            profilePicture: user.profilePicture || "",
+            bio: user.bio || "",
+        })
 
         const accessToken = generateAccessToken(user._id.toString());
         const refreshToken = generateRefreshToken(user._id.toString());
