@@ -1,9 +1,21 @@
-import { Server } from "socket.io";
+// import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 
-let io;
+interface Message {
+    receiverId: string;
+    [key: string]: any;
+}
+
+interface CustomSocket extends Socket {
+    userId?: string;
+}
+
+let io: Server;
 const onlineUsers = new Map();
 
-export const initSocket = server => {
+import { Server as HttpServer } from "http";
+
+export const initSocket = (server: HttpServer) => {
     io = new Server(server, {
         cors: {
             origin: 'http://localhost:5173',
@@ -16,7 +28,7 @@ export const initSocket = server => {
 
         socket.on("setup", (userId: string) => {
             console.log("📨 Setup called by:", userId);
-            socket.userId = userId;
+            (socket as CustomSocket).userId = userId;
             onlineUsers.set(userId, socket.id);
 
             socket.emit("onlineUsers", Array.from(onlineUsers.keys()));
@@ -33,8 +45,8 @@ export const initSocket = server => {
 
         socket.on("disconnect", () => {
             console.log("Client disconnected: ", socket.id);
-            onlineUsers.delete(socket.userId);
-            socket.broadcast.emit("userOffline", socket.userId);
+            onlineUsers.delete((socket as CustomSocket).userId);
+            socket.broadcast.emit("userOffline", (socket as CustomSocket).userId);
         })
 
     })

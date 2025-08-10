@@ -10,7 +10,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
         const users = await User.find({ _id: { $ne: req.userId } })
             .select("-password");
 
-        const unseenMessages = {}
+        const unseenMessages: { [key: string]: number } = {}
 
         const promise = users.map(async (user) => {
             const messages = await Message.find({
